@@ -1,6 +1,6 @@
 .review-page {
-  min-height: 650px;
-  padding: 60px 0 88px;
+  min-height: calc(100dvh - var(--header-height) - 80px);
+  padding: 44px 0 64px;
 }
 
 .rp-workspace.shell {
@@ -12,7 +12,7 @@
   min-height: 44px;
   align-items: center;
   gap: 9px;
-  margin: -12px 0 21px;
+  margin: 0 0 20px;
   color: var(--color-muted);
   font-size: 14px;
   text-decoration: none;
@@ -20,11 +20,12 @@
 .rp-back:hover { color: var(--color-primary); }
 
 .rp-page-heading {
-  margin-bottom: 32px;
+  margin-bottom: 28px;
+  text-align: left;
 }
 
 .rp-page-heading h1 {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: clamp(36px, 4.6vw, 50px);
   font-weight: 400;
   letter-spacing: -0.035em;
@@ -38,11 +39,13 @@
   line-height: 1.6;
 }
 
+.rp-picker { display: grid; gap: 24px; }
+
 .rp-drop-zone {
-  padding: 32px 28px 24px;
-  border: 1px dashed var(--color-rule);
+  padding: 28px;
+  border: 1px solid var(--color-rule);
   background: var(--color-surface-alt);
-  text-align: center;
+  text-align: left;
   transition: border-color 160ms ease, background-color 160ms ease;
 }
 
@@ -51,29 +54,26 @@
   background: var(--color-surface);
 }
 
-.rp-empty-file > svg {
-  margin: 0 auto 16px;
-  color: var(--color-primary);
-}
-
 .rp-empty-file h2 {
-  margin: 0 0 7px;
+  margin: 0 0 6px;
   font-family: var(--font-sans);
   font-size: 20px;
   font-weight: 500;
   letter-spacing: -0.025em;
 }
+.rp-empty-file p { color: var(--color-muted); font-size: 14px; line-height: 1.6; }
 
 .rp-picker-actions {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 12px;
   margin-top: 20px;
 }
 
 .rp-file-control {
   position: relative;
+  min-width: 180px;
   cursor: pointer;
 }
 
@@ -90,22 +90,6 @@
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
 }
-
-.rp-photo-control {
-  display: inline-flex;
-  min-height: 44px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 0 8px;
-  color: var(--color-primary);
-  font-size: 14px;
-  text-decoration: underline;
-  text-decoration-color: var(--color-rule);
-  text-underline-offset: 4px;
-  transition: text-decoration-color 160ms ease;
-}
-.rp-photo-control:hover { text-decoration-color: currentColor; }
 
 .rp-file-help {
   margin: 20px 0 0;
@@ -134,14 +118,12 @@
 }
 
 .rp-file-details h2 {
-  overflow: hidden;
   margin: 0 0 5px;
   font-family: var(--font-sans);
   font-size: 17px;
   font-weight: 500;
   line-height: 1.4;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .rp-file-details p {
@@ -172,7 +154,7 @@
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  margin: 14px 0 0;
+  margin: 0;
   color: var(--color-ink);
   font-size: 14px;
   line-height: 1.6;
@@ -188,11 +170,9 @@
 }
 
 .rp-analysis-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-top: 24px;
+  display: grid;
+  justify-items: start;
+  gap: 20px;
 }
 
 .rp-analysis-row p {
@@ -205,13 +185,14 @@
 
 .rp-analysis-row strong { color: var(--color-ink); font-weight: 500; }
 
-.rp-analyze-actions { flex-shrink: 0; }
+.rp-analyze-actions .button { min-width: 180px; }
 .rp-disabled { opacity: 0.65; cursor: wait; }
-.rp-context { margin-top: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--color-rule); }
+.rp-context { border-bottom: 1px solid var(--color-rule); }
 .rp-context summary {
   display: flex;
   min-height: 44px;
-  width: fit-content;
+  width: 100%;
+  justify-content: space-between;
   align-items: center;
   gap: 5px;
   color: var(--color-ink);
@@ -220,10 +201,11 @@
   list-style: none;
 }
 .rp-context summary::-webkit-details-marker { display: none; }
-.rp-context summary span { color: var(--color-muted); }
+.rp-context .rp-note-label { color: var(--color-ink); }
+.rp-context .rp-note-label > span { margin-left: 4px; color: var(--color-muted); }
 .rp-context summary svg { margin-left: 8px; transition: transform 160ms ease; }
 .rp-context[open] summary svg { transform: rotate(180deg); }
-.rp-context label { display: block; margin: 12px 0 8px; font-size: 14px; font-weight: 500; }
+.rp-context label { display: block; margin: 16px 0 8px; font-size: 14px; font-weight: 500; }
 .rp-context textarea {
   display: block;
   width: 100%;
@@ -239,8 +221,9 @@
   line-height: 1.6;
 }
 .rp-context textarea::placeholder { color: var(--color-muted); }
-.rp-connection { margin: 18px 0 0; color: var(--color-muted); font-size: 14px; line-height: 1.6; }
-.rp-progress { display: flex; align-items: center; gap: 10px; margin-top: 24px; font-size: 14px; line-height: 1.6; }
+.rp-context[open] { padding-bottom: 24px; }
+.rp-connection { margin: 0; color: var(--color-muted); font-size: 14px; line-height: 1.6; }
+.rp-progress { display: flex; align-items: center; gap: 10px; font-size: 14px; line-height: 1.6; }
 .rp-spinner { flex-shrink: 0; animation: rp-spin 1s linear infinite; }
 @keyframes rp-spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .rp-spinner { animation: none; } }
@@ -256,15 +239,15 @@
 
 @media (max-width: 700px) {
   .review-page {
-    min-height: 0;
-    padding: 38px 0 62px;
+    padding: 24px 0 48px;
   }
 
   .rp-drop-zone {
-    padding: 32px 20px 24px;
+    padding: 24px;
   }
 
-  .rp-analysis-row { flex-direction: column; align-items: stretch; gap: 20px; }
+  .rp-analysis-row { justify-items: stretch; }
+  .rp-analyze-actions { width: 100%; }
   .rp-analyze-actions .button { width: 100%; justify-content: center; }
 
 }
@@ -277,7 +260,7 @@
   .rp-picker-actions {
     flex-direction: column;
     align-items: stretch;
-    gap: 4px;
+    gap: 12px;
     margin-top: 20px;
   }
 
