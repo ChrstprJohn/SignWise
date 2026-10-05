@@ -39,7 +39,7 @@
 }
 
 .rp-drop-zone {
-  padding: 40px 28px 27px;
+  padding: 32px 28px 24px;
   border: 1px dashed var(--color-rule);
   background: var(--color-surface-alt);
   text-align: center;
@@ -64,19 +64,12 @@
   letter-spacing: -0.025em;
 }
 
-.rp-empty-file p {
-  margin: 0;
-  color: var(--color-muted);
-  font-size: 14px;
-  line-height: 1.6;
-}
-
 .rp-picker-actions {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  margin-top: 26px;
+  margin-top: 20px;
 }
 
 .rp-file-control {
@@ -97,6 +90,22 @@
   outline: 2px solid var(--color-primary);
   outline-offset: 4px;
 }
+
+.rp-photo-control {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 8px;
+  color: var(--color-primary);
+  font-size: 14px;
+  text-decoration: underline;
+  text-decoration-color: var(--color-rule);
+  text-underline-offset: 4px;
+  transition: text-decoration-color 160ms ease;
+}
+.rp-photo-control:hover { text-decoration-color: currentColor; }
 
 .rp-file-help {
   margin: 20px 0 0;
@@ -187,25 +196,34 @@
 }
 
 .rp-analysis-row p {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
   margin: 0;
+  max-width: 64ch;
   color: var(--color-muted);
   font-size: 14px;
   line-height: 1.6;
 }
 
-.rp-analysis-row p svg {
-  flex-shrink: 0;
-  margin-top: 3px;
-}
+.rp-analysis-row strong { color: var(--color-ink); font-weight: 500; }
 
 .rp-analyze-actions { flex-shrink: 0; }
 .rp-disabled { opacity: 0.65; cursor: wait; }
-.rp-context { margin-top: 28px; }
-.rp-context label { display: block; margin-bottom: 10px; font-size: 14px; font-weight: 500; }
-.rp-context label span { margin-left: 8px; color: var(--color-muted); font-weight: 400; }
+.rp-context { margin-top: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--color-rule); }
+.rp-context summary {
+  display: flex;
+  min-height: 44px;
+  width: fit-content;
+  align-items: center;
+  gap: 5px;
+  color: var(--color-ink);
+  font-size: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.rp-context summary::-webkit-details-marker { display: none; }
+.rp-context summary span { color: var(--color-muted); }
+.rp-context summary svg { margin-left: 8px; transition: transform 160ms ease; }
+.rp-context[open] summary svg { transform: rotate(180deg); }
+.rp-context label { display: block; margin: 12px 0 8px; font-size: 14px; font-weight: 500; }
 .rp-context textarea {
   display: block;
   width: 100%;
@@ -259,8 +277,8 @@
   .rp-picker-actions {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
-    margin-top: 23px;
+    gap: 4px;
+    margin-top: 20px;
   }
 
   .rp-file-control {

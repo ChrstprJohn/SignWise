@@ -164,7 +164,7 @@ Current follow-up overrides: the footer's warm-ivory surface (--color-surface: #
 
 ## Document review extension — 2026-10-06
 
-The review page retains its 850px measure and 36–50px serif title. A 44px Back to home link sits above the title. The pale-stone drop zone is followed by an optional 1,000-character context textarea with a warm-ivory background, clear labels, and inherited focus treatment. An explicit navy Analyze action sits beside the upload disclosure on desktop; actions stack at 700px and below.
+The review page retains its 850px measure and 36–50px serif title. A 44px Back to home link sits above the title. The pale-stone drop zone has one primary Choose a file button and a quieter Take a photo action. Format and size requirements stay visible. A native Add a note (optional) disclosure holds the labeled 1,000-character context field. After selection, Analyze document becomes the primary action. A visible notice explains that analysis sends the document or photo to Google Gemini and that SignWise does not save files or reviews. Actions stack at 700px and below.
 
 Results use a small uppercase eyebrow, a serif report title, a pale-stone summary, thin ruled key-term/finding rows, restrained textual priority labels, and quoted source excerpts with a narrow stone left rule. Mobile terms, heading actions, and priority labels stack. No safety gauge or invented legal score is shown. Loading uses a small spinner with a reduced-motion fallback; results receive focus with sticky-header-aware scroll spacing. Empty, setup, cancellation, failure, and retry states share the existing typography and muted/ink colors.
 

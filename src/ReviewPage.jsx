@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft, ArrowUpRight, Camera, CircleAlert, FileCheck2,
-  LoaderCircle, LockKeyhole, Upload, X,
+  ChevronDown, LoaderCircle, Upload, X,
 } from 'lucide-react';
 import { FILE_ACCEPT, formatFileSize, validateFile } from './file-validation.js';
 import './review.css';
@@ -102,31 +102,33 @@ function DocumentPicker({ onComplete, onInvalidate }) {
           <FileCheck2 className="rp-file-icon" size={30} strokeWidth={1.5} aria-hidden="true" />
           <div className="rp-file-details"><h2 title={file.name}>{file.name}</h2><p>{formatFileSize(file.size)} · {busy ? 'Being reviewed' : 'Ready to review'}</p></div>
           <button className="rp-remove-file" type="button" disabled={busy} onClick={clearFile} aria-label={`Remove ${file.name}`}><X size={20} strokeWidth={1.6} aria-hidden="true" /></button>
-        </div> : <div className="rp-empty-file"><Upload size={31} strokeWidth={1.5} aria-hidden="true" /><h2>Drop your document here</h2><p>Or select a file from your device.</p></div>}
+        </div> : <div className="rp-empty-file"><Upload size={28} strokeWidth={1.5} aria-hidden="true" /><h2>Drop a file here</h2></div>}
         <div className="rp-picker-actions">
           <label className={`button button-${file ? 'outline' : 'primary'} rp-file-control${busy ? ' rp-disabled' : ''}`}>
             <input ref={inputRef} type="file" accept={FILE_ACCEPT} disabled={busy} aria-label={file ? 'Choose a different file' : 'Choose a file'} aria-describedby="rp-file-help rp-upload-error" aria-invalid={Boolean(error)} onChange={(event) => chooseFiles(event.target.files)} onClick={(event) => { event.target.value = ''; }} />
             <span>{file ? 'Change file' : 'Choose a file'}</span><ArrowUpRight size={17} strokeWidth={1.6} aria-hidden="true" />
           </label>
-          <label className={`button button-outline rp-file-control${busy ? ' rp-disabled' : ''}`}>
+          <label className={`rp-photo-control rp-file-control${busy ? ' rp-disabled' : ''}`}>
             <input ref={photoRef} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" disabled={busy} aria-label="Take or choose a photo" aria-describedby="rp-file-help rp-upload-error" aria-invalid={Boolean(error)} onChange={(event) => chooseFiles(event.target.files, true)} onClick={(event) => { event.target.value = ''; }} />
             <Camera size={18} strokeWidth={1.6} aria-hidden="true" /><span>Take a photo</span>
           </label>
         </div>
         <p id="rp-file-help" className="rp-file-help">PDF, DOCX, TXT, JPG, PNG, WebP · <span>Up to 10 MB</span></p>
       </div>
-      <div className="rp-context"><label htmlFor="rp-context">What should we focus on? <span>Optional</span></label>
-        <textarea id="rp-context" value={context} maxLength={1000} rows={2} disabled={busy} placeholder="e.g. I’m the tenant. Check the deposit and early termination terms." onChange={(event) => { setContext(event.target.value); onInvalidate(); }} />
-      </div>
+      <details className="rp-context">
+        <summary>Add a note <span>(optional)</span><ChevronDown size={17} strokeWidth={1.6} aria-hidden="true" /></summary>
+        <label htmlFor="rp-context">What should we focus on?</label>
+        <textarea id="rp-context" value={context} maxLength={1000} rows={2} disabled={busy} placeholder="e.g. Check the deposit and early termination terms." onChange={(event) => { setContext(event.target.value); onInvalidate(); }} />
+      </details>
       <p id="rp-upload-error" className="rp-upload-error" role="alert" hidden={!error}><CircleAlert size={17} strokeWidth={1.6} aria-hidden="true" />{error}</p>
-      {connection !== 'ready' && <p className="rp-connection" role="status">{connection === 'checking' ? 'Checking the AI connection…' : connection === 'unconfigured' ? 'AI isn’t connected yet. You can select a file while it’s being set up.' : 'The AI connection is unavailable. You can try again shortly.'}</p>}
+      {connection !== 'ready' && <p className="rp-connection" role="status">{connection === 'checking' ? 'Connecting to Google Gemini…' : connection === 'unconfigured' ? 'Analysis isn’t available yet. You can still choose a file.' : 'Couldn’t connect to the analysis service. Try again shortly.'}</p>}
       <div className="rp-analysis-row">
-        <p><LockKeyhole size={18} strokeWidth={1.6} aria-hidden="true" /><span>Only sent when you choose Analyze.<br />Gemini processes your document. SignWise doesn’t save files or reviews.</span></p>
-        <div className="rp-analyze-actions">
-          {busy ? <button className="button button-outline" type="button" onClick={cancelReview}>Cancel review<X size={16} aria-hidden="true" /></button> : <button className="button button-primary" type="submit" disabled={!file || connection === 'checking' || connection === 'unconfigured'}>Analyze document<ArrowUpRight size={17} aria-hidden="true" /></button>}
-        </div>
+        <p id="rp-send-notice">When you select Analyze document, we send your document or photo to <strong>Google Gemini</strong> for analysis. SignWise doesn’t save files or reviews.</p>
+        {file && <div className="rp-analyze-actions">
+          {busy ? <button className="button button-outline" type="button" onClick={cancelReview}>Cancel review<X size={16} aria-hidden="true" /></button> : <button className="button button-primary" type="submit" aria-describedby="rp-send-notice" disabled={connection === 'checking' || connection === 'unconfigured'}>Analyze document<ArrowUpRight size={17} aria-hidden="true" /></button>}
+        </div>}
       </div>
-      {busy && <div className="rp-progress" aria-hidden="true"><LoaderCircle size={19} className="rp-spinner" />Reading your document and preparing your review…</div>}
+      {busy && <div className="rp-progress" aria-hidden="true"><LoaderCircle size={19} className="rp-spinner" />Google Gemini is analyzing your document…</div>}
       <span className="rp-screen-reader" role="status">{status}</span>
     </form>
 
@@ -143,7 +145,7 @@ export default function ReviewPage({ hidden, onComplete, onInvalidate }) {
   return <main id={hidden ? undefined : 'main'} className="review-page" tabIndex={-1} hidden={hidden}>
     <div className="shell rp-workspace">
       <a href="/#home" className="rp-back"><ArrowLeft size={17} strokeWidth={1.6} aria-hidden="true" />Back to home</a>
-      <div className="rp-page-heading"><h1 ref={headingRef} tabIndex={-1}>Review your document.</h1><p>Add a lease, job offer, or agreement.</p></div>
+      <div className="rp-page-heading"><h1 ref={headingRef} tabIndex={-1}>Review your document.</h1><p>Upload a file or photo, then analyze it.</p></div>
       <DocumentPicker onComplete={onComplete} onInvalidate={onInvalidate} />
     </div>
   </main>;

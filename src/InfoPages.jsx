@@ -22,7 +22,7 @@ const coverage = [
 const essentials = [
   {
     question: 'Can I analyze a document now?',
-    answer: 'Choose a document on the review page, then select Analyze document. Once the AI connection is configured, you’ll get a summary, key terms, points to review, helpful terms, and suggested questions.',
+    answer: 'Choose a file or photo, then select Analyze document. Your results open on a new page: red flags, good terms, and questions about missing or unclear details.',
   },
   {
     question: 'Which files are supported?',
@@ -30,7 +30,7 @@ const essentials = [
   },
   {
     question: 'Where does my file go?',
-    answer: 'Selecting a file keeps it on your device. Choosing Analyze sends it through SignWise’s server to Google Gemini for processing. SignWise does not save files or reviews. Google’s handling depends on the API project’s plan and settings; avoid sharing documents you are not comfortable sending to this service.',
+    answer: 'When you select Analyze document, your document or photo is sent through SignWise to Google Gemini for analysis. SignWise doesn’t save files or reviews. Google’s handling depends on the API plan and settings.',
   },
   {
     question: 'Is this legal advice?',
