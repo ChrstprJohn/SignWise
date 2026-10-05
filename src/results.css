@@ -1,0 +1,77 @@
+.results-page { min-height: calc(100dvh - var(--header-height) - 92px); padding: 44px 0 72px; }
+.results-workspace.shell { max-width: 850px; overflow-wrap: anywhere; }
+.result-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+.result-toolbar .rp-back { margin: 0; }
+.result-save { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 12px; font-size: 14px; color: var(--color-primary); border-radius: 2px; transition: background-color 180ms; }
+.result-save:hover { background: var(--color-surface-alt); }
+.result-heading h1, .result-empty-page h1 { margin: 0; font-size: clamp(36px, 4.6vw, 50px); font-weight: 400; line-height: 1.1; letter-spacing: -0.035em; }
+.result-heading > p { display: flex; align-items: flex-start; gap: 10px; margin-top: 18px; font-size: 14px; line-height: 1.6; }
+.result-heading > p > svg { margin-top: 3px; color: var(--color-muted); }
+.result-document-type { display: block; margin-top: 2px; font-size: 13px; color: var(--color-muted); }
+.result-jump-nav { display: flex; gap: 28px; border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule); margin: 30px 0 36px; padding-block: 6px; }
+.result-jump-nav a { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; }
+.result-jump-nav a:hover { color: var(--color-terra); }
+.result-jump-nav a span { font-size: 12px; color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.result-section { margin-top: 44px; scroll-margin-top: calc(var(--header-height) + 24px); }
+.result-section:first-of-type { margin-top: 0; }
+.result-section-heading { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.result-section-heading h2 { margin: 0; font-size: 32px; line-height: 1.15; font-weight: 400; }
+.result-section-heading > svg { color: var(--color-primary); }
+.result-concerns .result-section-heading > svg { color: var(--color-terra); }
+.result-section-heading > span { margin-left: auto; font-size: 13px; color: var(--color-muted); font-variant-numeric: tabular-nums; }
+.result-findings { margin: 0; padding: 0; list-style: none; }
+.result-findings > li { padding: 24px 0; border-bottom: 1px solid var(--color-rule); }
+.result-findings > li:first-child { padding-top: 0; }
+.result-finding-title { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.result-findings h3, .result-questions h3 { margin: 0; font-family: var(--font-sans); font-size: 18px; font-weight: 500; line-height: 1.5; letter-spacing: -0.015em; }
+.result-findings li > p, .result-questions li > p { margin: 9px 0 0; font-size: 16px; line-height: 1.7; }
+.result-priority { flex-shrink: 0; font-size: 12px; line-height: 1.6; padding: 3px 8px; text-transform: capitalize; color: var(--color-muted); background: var(--color-surface-alt); border-radius: 2px; }
+.result-priority-high { color: var(--color-terra); }
+.result-priority-medium { color: var(--color-ink); }
+.result-clause { margin-top: 8px; color: var(--color-muted); }
+.result-clause summary { width: fit-content; max-width: 100%; min-height: 44px; padding-block: 12px; font-size: 13px; line-height: 1.5; }
+.result-clause summary:hover { color: var(--color-primary); }
+.result-clause blockquote, .result-clause > p { margin: 0; padding: 12px 16px; border-left: 2px solid var(--color-brass); background: var(--color-surface-alt); color: var(--color-ink); font-size: 14px; line-height: 1.7; white-space: pre-line; }
+.result-empty { margin: 0; padding-bottom: 24px; border-bottom: 1px solid var(--color-rule); color: var(--color-muted); font-size: 15px; line-height: 1.7; }
+.result-questions { margin: 0; padding: 0; list-style: none; }
+.result-questions li { padding: 22px 0; border-bottom: 1px solid var(--color-rule); }
+.result-questions li:first-child { padding-top: 0; }
+.result-question-kind { display: block; margin-bottom: 7px; color: var(--color-muted); font-size: 12px; line-height: 1.6; }
+.result-questions li > p { color: var(--color-muted); font-size: 14px; }
+.result-overview { margin-top: 36px; background: var(--color-surface-alt); }
+.result-overview > summary { min-height: 56px; padding: 16px 20px; color: var(--color-primary); font-size: 14px; line-height: 1.7; }
+.result-overview-content { padding: 0 20px 20px; font-size: 14px; line-height: 1.7; }
+.result-overview-content > p { margin: 0; white-space: pre-line; }
+.result-overview-content dl { margin: 18px 0 0; }
+.result-overview-content dl > div { display: grid; grid-template-columns: 1fr 2fr; gap: 24px; padding: 12px 0; border-top: 1px solid var(--color-rule); }
+.result-overview-content dt { font-weight: 500; }
+.result-overview-content dd { margin: 0; }
+.result-overview-content small { display: block; color: var(--color-muted); font-size: 12px; }
+.result-limitations { margin-top: 20px; }
+.result-limitations h3 { font-size: 14px; font-weight: 500; }
+.result-limitations ul { margin: 8px 0 0; padding-left: 18px; color: var(--color-muted); }
+.result-disclaimer { margin: 20px 0 0; color: var(--color-muted); font-size: 12px; line-height: 1.7; }
+.result-empty-page > p { margin-top: 18px; max-width: 48ch; font-size: 16px; line-height: 1.7; color: var(--color-muted); }
+.result-empty-page > .button { margin-top: 28px; }
+
+@media (max-width: 700px) {
+  .results-page { padding: 28px 0 48px; }
+  .result-toolbar { gap: 12px; margin-bottom: 24px; }
+  .result-save { padding-inline: 6px; }
+  .result-jump-nav { justify-content: space-between; gap: 12px; margin: 26px 0 30px; }
+  .result-jump-nav a { gap: 6px; font-size: 13px; }
+  .result-section { margin-top: 36px; }
+  .result-section-heading h2 { font-size: 29px; }
+  .result-finding-title { flex-wrap: wrap; gap: 8px; }
+  .result-finding-title h3 { flex: 1 1 100%; }
+  .result-findings h3, .result-questions h3 { font-size: 17px; }
+  .result-findings li > p { font-size: 15px; }
+  .result-overview-content dl > div { grid-template-columns: 1fr; gap: 3px; }
+}
+
+@media (max-width: 360px) {
+  .result-jump-nav { gap: 8px; }
+  .result-jump-nav a { font-size: 12px; }
+  .result-section-heading { gap: 9px; }
+  .result-section-heading h2 { font-size: 26px; }
+}
