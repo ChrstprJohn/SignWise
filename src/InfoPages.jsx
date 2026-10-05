@@ -1,5 +1,6 @@
 import { ArrowUpRight, CircleAlert, MessageCircle, Minus, Plus, ShieldCheck, Star } from 'lucide-react'
 import './info-pages.css'
+import { trackEvent } from './analytics.js'
 
 const coverage = [
   {
@@ -107,7 +108,7 @@ export default function InfoSections() {
           <h2 id="closing-cta-heading">Ready to understand your document?</h2>
           <p>Start with a file or photo.</p>
         </div>
-        <a href="/review/" className="button button-light">Check my document<ArrowUpRight size={18} aria-hidden="true" /></a>
+        <a href="/review/" className="button button-light" onClick={() => trackEvent('review_started', { source: 'closing_cta' })}>Check my document<ArrowUpRight size={18} aria-hidden="true" /></a>
       </div>
     </section>
   </>

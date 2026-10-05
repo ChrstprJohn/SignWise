@@ -3,6 +3,7 @@ import { ArrowUpRight, Menu, X } from 'lucide-react';
 import ReviewFlow from './ReviewFlow.jsx';
 import { getPath, subscribeToPath } from './navigation.js';
 import InfoSections from './InfoPages.jsx';
+import { trackEvent } from './analytics.js';
 
 function Header({ page }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,7 +59,7 @@ function LandingPage() {
       <div className="hero-content shell">
         <h1 id="hero-heading">Understand what<br />you’re signing.</h1>
         <p>Spot red flags, understand the terms,<br className="desktop-break" /> and know what to ask before you sign.</p>
-        <div className="hero-actions"><a href="/review/" className="button button-light">Check my document<ArrowUpRight size={18} aria-hidden="true" /></a></div>
+        <div className="hero-actions"><a href="/review/" className="button button-light" onClick={() => trackEvent('review_started', { source: 'hero' })}>Check my document<ArrowUpRight size={18} aria-hidden="true" /></a></div>
       </div>
     </section>
 
@@ -124,6 +125,12 @@ export default function App() {
   const path = useSyncExternalStore(subscribeToPath, getPath);
   const showingResults = path === '/review/results';
   const page = path === '/review' || showingResults ? 'review' : 'home';
+  const trackedPath = useRef(null);
+  useEffect(() => {
+    if (trackedPath.current === path) return;
+    trackedPath.current = path;
+    if (path === '/review') trackEvent('review_upload_viewed');
+  }, [path]);
   useEffect(() => {
     document.title = showingResults ? 'Your document review — SignWise' : page === 'review' ? 'Review a document — SignWise' : 'SignWise — Understand what you’re signing.';
   }, [page, showingResults]);

@@ -3,6 +3,8 @@ import { ArrowLeft, ArrowUpRight, Check, CircleAlert, Download, FileText, Messag
 import { navigateTo } from './navigation.js';
 import { formatReviewText } from './review-export.js';
 import './results.css';
+import { trackEvent } from './analytics.js';
+import { reviewCounts } from './analytics-metadata.js';
 
 function Clause({ quote, location }) {
   if (!quote && !location) return null;
@@ -22,14 +24,25 @@ function FindingList({ items, concerns = false }) {
 
 export default function ResultsPage({ report }) {
   const titleRef = useRef(null);
+  const trackedReport = useRef(undefined);
+  useEffect(() => {
+    if (trackedReport.current === report) return;
+    trackedReport.current = report;
+    trackEvent('review_results_viewed', { report_available: Boolean(report), ...report?.analytics, ...(report ? reviewCounts(report.review) : {}) });
+  }, [report]);
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
 
   function downloadReview() {
-    const url = URL.createObjectURL(new Blob([formatReviewText(report)], { type: 'text/plain;charset=utf-8' }));
-    const link = document.createElement('a');
-    link.href = url; link.download = 'signwise-review.txt';
-    document.body.appendChild(link); link.click(); link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    const properties = { ...report.analytics, ...reviewCounts(report.review) };
+    trackEvent('review_download_requested', properties);
+    try {
+      const url = URL.createObjectURL(new Blob([formatReviewText(report)], { type: 'text/plain;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url; link.download = 'signwise-review.txt';
+      document.body.appendChild(link); link.click(); link.remove();
+      trackEvent('review_download_started', properties);
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    } catch (error) { trackEvent('review_download_failed', { ...properties, error_type: 'export' }); throw error; }
   }
 
   if (!report) return <main id="main" className="results-page" tabIndex={-1}>

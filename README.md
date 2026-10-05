@@ -57,6 +57,12 @@ Choosing Analyze sends document contents through the local server to Google Gemi
 
 Tests use synthetic documents and a stubbed provider, with no external AI calls. They cover extraction, size/type checks, secret handling, structured responses, provider failures, cancellation, timeout, and upload boundaries. A live Gemini review remains to be verified after a valid key is supplied.
 
+## PostHog analytics
+
+SignWise uses `posthog-js` for pageviews, masked clicks, and the document-review funnel. Every event is tagged `site_name = signwise` and the Vite `environment`. Production public browser config is included in `.env.production`; keep the private Gemini key in the ignored server `.env`. Tracking excludes filenames, document contents, user notes, and AI report text. Session replay is disabled; geography is approximate IP-based enrichment only.
+
+See the independent [SignWise PostHog documentation](documents/posthog/README.md) for setup, implementation, event properties, verification, and the [PostHog AI dashboard prompt](documents/posthog/DASHBOARD.md). Metadata privacy is covered by focused unit tests; desktop/mobile browser checks also verified cancellation, export, opt-out, and masked payloads against mocked services.
+
 ## Visual context
 
 The landing page keeps the existing matte warm-ivory, ink-navy, serif/sans design, compact mobile navigation, process imagery, mobile coverage containers, testimonial edge fades, FAQ layout, and closing review CTA. FAQs now explain the real upload behavior. The 15k+ visit statistic and reader testimonials remain unverified preview content inherited from the previous design.
