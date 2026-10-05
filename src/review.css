@@ -21,7 +21,7 @@
 
 .rp-page-heading {
   margin-bottom: 28px;
-  text-align: left;
+  text-align: center;
 }
 
 .rp-page-heading h1 {
@@ -43,9 +43,9 @@
 
 .rp-drop-zone {
   padding: 28px;
-  border: 1px solid var(--color-rule);
+  border: 1px dashed var(--color-muted);
   background: var(--color-surface-alt);
-  text-align: left;
+  text-align: center;
   transition: border-color 160ms ease, background-color 160ms ease;
 }
 
@@ -66,7 +66,7 @@
 .rp-picker-actions {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 12px;
   margin-top: 20px;
 }
@@ -171,7 +171,7 @@
 
 .rp-analysis-row {
   display: grid;
-  justify-items: start;
+  justify-items: center;
   gap: 20px;
 }
 
@@ -181,6 +181,7 @@
   color: var(--color-muted);
   font-size: 14px;
   line-height: 1.6;
+  text-align: center;
 }
 
 .rp-analysis-row strong { color: var(--color-ink); font-weight: 500; }
