@@ -63,6 +63,6 @@ Download-start measures a browser export attempt, not proof that the user saved 
 - `src/App.jsx`, `src/InfoPages.jsx`: entry CTAs and upload-route event.
 - `src/ReviewPage.jsx`: selection and analysis attempt events.
 - `src/ResultsPage.jsx`: results/recovery and export events.
-- `.env.production`, `.env.example`: public browser config; `.env.local` is ignored.
+- `.env.example`: browser configuration template. `.env.production` and `.env.local` are ignored local config; production hosts must supply build-time variables.
 
 References: [PostHog JavaScript configuration](https://posthog.com/docs/libraries/js/config), [Vite environment variables](https://vite.dev/guide/env-and-mode).

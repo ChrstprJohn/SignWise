@@ -59,7 +59,7 @@ Tests use synthetic documents and a stubbed provider, with no external AI calls.
 
 ## PostHog analytics
 
-SignWise uses `posthog-js` for pageviews, masked clicks, and the document-review funnel. Every event is tagged `site_name = signwise` and the Vite `environment`. Production public browser config is included in `.env.production`; keep the private Gemini key in the ignored server `.env`. Tracking excludes filenames, document contents, user notes, and AI report text. Session replay is disabled; geography is approximate IP-based enrichment only.
+SignWise uses `posthog-js` for pageviews, masked clicks, and the document-review funnel. Every event is tagged `site_name = signwise` and the Vite `environment`. Set the public PostHog token and host in your hosting build environment; local `.env.production` is ignored and not supplied by the repository. Keep the private Gemini key in the ignored server `.env`. Tracking excludes filenames, document contents, user notes, and AI report text. Session replay is disabled; geography is approximate IP-based enrichment only.
 
 See the independent [SignWise PostHog documentation](documents/posthog/README.md) for setup, implementation, event properties, verification, and the [PostHog AI dashboard prompt](documents/posthog/DASHBOARD.md). Metadata privacy is covered by focused unit tests; desktop/mobile browser checks also verified cancellation, export, opt-out, and masked payloads against mocked services.
 

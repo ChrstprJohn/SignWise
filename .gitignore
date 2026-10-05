@@ -5,8 +5,6 @@ dist/
 .env
 .env.*
 !.env.example
-# This tracked file contains public browser analytics settings only.
-!.env.production
 *.local
 tmp/
 artifacts/

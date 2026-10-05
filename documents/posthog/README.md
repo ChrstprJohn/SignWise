@@ -7,14 +7,14 @@ This folder describes SignWise only. Its implementation is independent of the ot
 
 ## Configuration
 
-The public browser configuration is already supplied in `.env.production`:
+Set these public browser variables in your hosting provider's build environment, or in an ignored local `.env.production` file:
 
 ```dotenv
 VITE_POSTHOG_TOKEN=your_public_project_token
 VITE_POSTHOG_HOST=https://us.i.posthog.com
 ```
 
-The checked-in file contains the shared project's actual public ingestion token, not the placeholder above. This token is designed to be embedded in the browser bundle. Never add a PostHog personal API key or the private Gemini API key to this file. The server's `.env` remains ignored and separate.
+Use the shared project's actual public ingestion token, not the placeholder above. `.env.production` is ignored and not included in new repository checkouts; the configured local file was retained. This token is designed to be embedded in the browser bundle. Never add a PostHog personal API key or the private Gemini API key to this file. The server's `.env` remains ignored and separate. An earlier commit included the public production config; removing it from tracking does not remove it from Git history.
 
 For development, `.env.local` contains the same browser settings and is Git-ignored. Vite embeds these values at build time. Process environment values override env-file settings; use them to select another project when deploying elsewhere. Restart Vite after changing env files, or rebuild and redeploy for production. With no token, the tracking wrapper is a no-op. To disable an existing configured deployment, build with an empty `VITE_POSTHOG_TOKEN` override.
 
