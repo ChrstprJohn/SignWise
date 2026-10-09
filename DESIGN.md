@@ -14,7 +14,7 @@ colors:
 typography:
   display:
     fontFamily: "EB Garamond Variable, Georgia, serif"
-    fontSize: "clamp(60px, 5.8vw, 84px)"
+    fontSize: "clamp(2.5rem, calc(1.714rem + 3.93vw), 5.25rem)"
     fontWeight: 500
     lineHeight: 1.07
     letterSpacing: "-0.025em"
@@ -105,9 +105,9 @@ The frontmatter records the exact palette extracted from src/styles.css.
 **Display Font:** EB Garamond Variable, with Georgia and serif fallbacks.
 **Body Font:** DM Sans Variable, with a sans-serif fallback.
 
-Display headings use the frontmatter's regular-to-medium serif role. At the tablet breakpoint the landing display becomes (70px), then (57px) on mobile and a responsive (41â€“56px) on narrow phones. Landing body copy is (17â€“18px); the narrow-phone hero uses (16px). Supporting review-page copy uses (14â€“16px). Main process titles use medium-weight sans serif (18px), while coverage titles use medium-weight serif (28px).
+The hero uses a smooth 40–84px display scale. Landing section headings use a separate 28–52px scale, so How it works, coverage, Testimonials, FAQs, and the closing call to action are consistently smaller than the hero. Body copy scales from 16–18px; subheadings use 18–20px; labels and captions use separate restrained scales. Layout breakpoints do not override font sizes.
 
-Navigation uses the frontmatter's label role with uppercase presentation. Hero, process, coverage, Testimonials, and FAQ headings share the display scale and line height (1.07); the narrow-phone hero adjusts its line height to (1.1). Review-page headings use a quieter scale (36â€“50px), regular weight (400), and line height (1.1).
+Navigation retains uppercase presentation. Hero line height is 1.08; section headings use 1.15. Review and results page titles share a 32–50px scale and line height 1.1.
 
 ## Layout
 
@@ -171,3 +171,8 @@ Results use a small uppercase eyebrow, a serif report title, a pale-stone summar
 ## Dedicated report surface â€” 2026-10-06
 
 Results retain the 850px review measure and warm ivory background. A quiet toolbar puts Back to upload left and Save review right. The 36â€“50px serif title is followed by wrapped filename/type metadata and a three-link ruled section navigation. Section headings use 32px serif (29px mobile); finding titles use 18px sans (17px mobile). Concern priority appears in a restrained 12px label with text, never color alone. Findings use thin horizontal rules, 16px readable explanation text, and optional native clause disclosures. Follow-up rows distinguish missing details and unclear wording. An optional pale-stone overview contains summary/key terms/limits. Controls have 44px targets. Mobile priority labels wrap beneath titles, and secondary overview terms stack.
+
+
+## Responsive typography — 2026-10-09
+
+Landing display follows SchedSnap’s smooth clamp approach, with a larger 40–84px range suited to the serif brand; body copy scales from 16–18px at the default root size. Shared rem-based tokens govern page titles, section titles, subheadings, labels, and captions across landing, upload, and results. Typography no longer jumps at layout breakpoints. The hero wraps naturally within 20ch, with balanced headings and pretty paragraph wrapping. EB Garamond and DM Sans remain the brand fonts.

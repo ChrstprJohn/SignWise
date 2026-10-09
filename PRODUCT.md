@@ -47,3 +47,13 @@ No verified customer testimonials or analytics. The landing page retains a 15k+ 
 ## Latest results-flow refinement — 2026-10-06
 
 A completed live review opens its own /review/results/ page. Red flags precede good terms and specific follow-up questions about missing or unclear details. Optional clause disclosures and Document overview keep secondary information out of the main reading flow. The report and selected file remain in memory across upload/results navigation, with clear recovery after refresh. Live Gemini has been verified using synthetic documents; the existing server key and chosen model remain unchanged.
+
+
+## Mock landing statistics — 2026-10-09
+
+At the user’s request, the landing statistics show Total visits (15k+), Total scanned (8k+), and Review rating (5 star). These remain mock preview values, not measured analytics or verified customer ratings.
+
+
+## Upload consent and terms — 2026-10-09
+
+The optional note and analysis controls appear only after valid file selection. Analyze requires the Terms of Service checkbox; file removal clears acceptance. The /terms/ page is linked from consent, opens separately to preserve selection, and is absent from landing navigation. It describes AI limitations, authorized uploads, and Google Gemini processing.

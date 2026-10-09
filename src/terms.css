@@ -1,0 +1,9 @@
+.terms-page { max-width: 850px; padding-block: 44px 72px; }
+.terms-page h1 { font-size: var(--page-title-size); line-height: 1.1; }
+.terms-page h2 { font-size: var(--section-title-size); line-height: 1.2; margin-bottom: 12px; }
+.terms-page p { font-size: var(--body-size); line-height: 1.75; max-width: 70ch; }
+.terms-page p + p { margin-top: 16px; }
+.terms-page .terms-updated { margin: 12px 0 28px; color: var(--color-muted); font-size: var(--label-size); }
+.terms-page section { margin-top: 36px; }
+.terms-page a:not(.rp-back) { text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 700px) { .terms-page { padding-block: 24px 48px; } }

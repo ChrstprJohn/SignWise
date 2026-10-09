@@ -9,6 +9,8 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       input: {
+        terms: resolve(import.meta.dirname, 'terms/index.html'),
+        privacy: resolve(import.meta.dirname, 'privacy/index.html'),
         home: resolve(import.meta.dirname, 'index.html'),
         review: resolve(import.meta.dirname, 'review/index.html'),
         results: resolve(import.meta.dirname, 'review/results/index.html'),

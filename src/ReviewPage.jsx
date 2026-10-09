@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeft, ArrowUpRight, Camera, CircleAlert, FileCheck2,
-  ChevronDown, LoaderCircle, X,
+  LoaderCircle, X,
 } from 'lucide-react';
 import { FILE_ACCEPT, formatFileSize, validateFile } from './file-validation.js';
 import './review.css';
@@ -23,7 +23,7 @@ function DocumentPicker({ onComplete, onInvalidate }) {
   const attemptRef = useRef(null);
 
   const [file, setFile] = useState(null);
-  const [context, setContext] = useState('');
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [error, setError] = useState('');
   const [dragging, setDragging] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -71,24 +71,25 @@ function DocumentPicker({ onComplete, onInvalidate }) {
 
   function clearFile() {
     trackEvent('document_removed', fileProperties(file));
-    setFile(null); setError(''); onInvalidate(); setStatus('Document removed.');
-    inputRef.current.value = ''; photoRef.current.value = ''; inputRef.current.focus();
+    setFile(null); setAcceptedTerms(false); setError(''); onInvalidate(); setStatus('Document removed.');
+    inputRef.current.value = ''; photoRef.current.value = ''; requestAnimationFrame(() => inputRef.current?.focus());
   }
 
   async function analyze(event) {
     event.preventDefault();
     if (requestRef.current || busy) return;
+    if (!acceptedTerms) { setError('Accept the Terms of Service before analyzing your document.'); return; }
     const validationError = validateFile(file);
     if (validationError) { setError(validationError); trackEvent('document_review_blocked', { ...fileProperties(file), reason: 'file_validation' }); return; }
     const job = ++jobRef.current;
     const controller = new AbortController();
     requestRef.current = controller;
-    const attempt = { properties: { ...fileProperties(file), context_provided: Boolean(context.trim()) }, started: performance.now(), finished: false };
+    const attempt = { properties: { ...fileProperties(file), context_provided: false }, started: performance.now(), finished: false };
     attemptRef.current = attempt;
     trackEvent('document_review_started', attempt.properties);
     setBusy(true); setError(''); onInvalidate(); setStatus('Reviewing your document. This may take a minute.');
     const form = new FormData();
-    form.append('document', file); form.append('context', context.trim());
+    form.append('document', file);
     const timeout = setTimeout(() => controller.abort('timeout'), 150_000);
     let httpStatus = 0;
     try {
@@ -111,7 +112,7 @@ function DocumentPicker({ onComplete, onInvalidate }) {
   }
 
   return <>
-    <form aria-label="Review a document" className="rp-picker" onSubmit={analyze}>
+    <form aria-label="Review a document" className={`rp-picker${file ? ' rp-picker-selected' : ''}`} onSubmit={analyze}>
       <div
         className={`rp-drop-zone${dragging ? ' rp-is-dragging' : ''}${file ? ' rp-has-file' : ''}`}
         onDragEnter={(event) => { event.preventDefault(); if (!busy) { dragCounter.current += 1; setDragging(true); } }}
@@ -119,12 +120,13 @@ function DocumentPicker({ onComplete, onInvalidate }) {
         onDragLeave={(event) => { event.preventDefault(); dragCounter.current = Math.max(0, dragCounter.current - 1); if (!dragCounter.current) setDragging(false); }}
         onDrop={(event) => { event.preventDefault(); setDragging(false); dragCounter.current = 0; chooseFiles(event.dataTransfer.files, false, 'drop'); }}
       >
-        {file ? <div className="rp-selected-file">
+        {file && <div className="rp-selected-file">
           <FileCheck2 className="rp-file-icon" size={30} strokeWidth={1.5} aria-hidden="true" />
           <div className="rp-file-details"><h2 title={file.name}>{file.name}</h2><p>{formatFileSize(file.size)} · {busy ? 'Being reviewed' : 'Ready to review'}</p></div>
           <button className="rp-remove-file" type="button" disabled={busy} onClick={clearFile} aria-label={`Remove ${file.name}`}><X size={20} strokeWidth={1.6} aria-hidden="true" /></button>
-        </div> : <div className="rp-empty-file"><h2>Choose a file or photo</h2><p>Or drag and drop it here.</p></div>}
-        <div className="rp-picker-actions">
+        </div>}
+        <div className="rp-empty-file" aria-hidden={Boolean(file)}><h2>Upload your document</h2><p className="rp-desktop-hint">Or drag and drop it here.</p></div>
+        <div className="rp-picker-actions" inert={Boolean(file)} aria-hidden={Boolean(file)}>
           <label className={`button button-${file ? 'outline' : 'primary'} rp-file-control${busy ? ' rp-disabled' : ''}`}>
             <input ref={inputRef} type="file" accept={FILE_ACCEPT} disabled={busy} aria-label={file ? 'Choose a different file' : 'Choose a file'} aria-describedby="rp-file-help rp-upload-error" aria-invalid={Boolean(error)} onChange={(event) => chooseFiles(event.target.files)} onClick={(event) => { event.target.value = ''; }} />
             <span>{file ? 'Change file' : 'Choose a file'}</span><ArrowUpRight size={17} strokeWidth={1.6} aria-hidden="true" />
@@ -134,21 +136,20 @@ function DocumentPicker({ onComplete, onInvalidate }) {
             <Camera size={18} strokeWidth={1.6} aria-hidden="true" /><span>Take a photo</span>
           </label>
         </div>
-        <p id="rp-file-help" className="rp-file-help">PDF, DOCX, TXT, JPG, PNG, WebP · <span>Up to 10 MB</span></p>
+        <p id="rp-file-help" className="rp-file-help" aria-hidden={Boolean(file)}>PDF, DOCX, TXT, JPG, PNG, WebP · <span>Up to 10 MB</span></p>
       </div>
-      <details className="rp-context">
-        <summary><span className="rp-note-label">Add a note <span>(optional)</span></span><ChevronDown size={17} strokeWidth={1.6} aria-hidden="true" /></summary>
-        <label htmlFor="rp-context">What should we focus on?</label>
-        <textarea id="rp-context" value={context} maxLength={1000} rows={2} disabled={busy} placeholder="e.g. Check the deposit and early termination terms." onChange={(event) => { setContext(event.target.value); onInvalidate(); }} />
-      </details>
+      {!file && <p className="rp-terms-preview">Before uploading, read our <a className="text-link" href="/terms/" target="_blank" rel="noopener">Terms of Service<span className="rp-screen-reader"> (opens in a new tab)</span></a> and <a className="text-link" href="/privacy/" target="_blank" rel="noopener">Privacy Policy<span className="rp-screen-reader"> (opens in a new tab)</span></a>.</p>}
       <p id="rp-upload-error" className="rp-upload-error" role="alert" hidden={!error}><CircleAlert size={17} strokeWidth={1.6} aria-hidden="true" />{error}</p>
-      {connection !== 'ready' && <p className="rp-connection" role="status">{connection === 'checking' ? 'Connecting to Google Gemini…' : connection === 'unconfigured' ? 'Analysis isn’t available yet. You can still choose a file.' : 'Couldn’t connect to the analysis service. Try again shortly.'}</p>}
-      <div className="rp-analysis-row">
-        <p id="rp-send-notice">Analyzing sends your document or photo to <strong>Google Gemini</strong>. SignWise doesn’t save files or reviews.</p>
-        {file && <div className="rp-analyze-actions">
-          {busy ? <button className="button button-outline" type="button" onClick={cancelReview}>Cancel review<X size={16} aria-hidden="true" /></button> : <button className="button button-primary" type="submit" aria-describedby="rp-send-notice" disabled={connection === 'checking' || connection === 'unconfigured'}>Analyze document<ArrowUpRight size={17} aria-hidden="true" /></button>}
-        </div>}
-      </div>
+      {file && connection !== 'ready' && <p className="rp-connection" role="status">{connection === 'checking' ? 'Connecting to Google Gemini…' : connection === 'unconfigured' ? 'Analysis isn’t available yet. You can still choose a file.' : 'Couldn’t connect to the analysis service. Try again shortly.'}</p>}
+      {file && <div className="rp-analysis-row">
+        <div className="rp-terms-consent">
+          <input id="rp-accept-terms" type="checkbox" checked={acceptedTerms} disabled={busy} onChange={(event) => setAcceptedTerms(event.target.checked)} required />
+          <label htmlFor="rp-accept-terms">I accept the <a className="text-link" href="/terms/" target="_blank" rel="noopener">Terms of Service<span className="rp-screen-reader"> (opens in a new tab)</span></a>.</label>
+        </div>
+        <div className="rp-analyze-actions">
+          {busy ? <button className="button button-outline" type="button" onClick={cancelReview}>Cancel review<X size={16} aria-hidden="true" /></button> : <button className="button button-primary" type="submit" disabled={!acceptedTerms || connection === 'checking' || connection === 'unconfigured'}>Analyze document<ArrowUpRight size={17} aria-hidden="true" /></button>}
+        </div>
+      </div>}
       {busy && <div className="rp-progress" aria-hidden="true"><LoaderCircle size={19} className="rp-spinner" />Google Gemini is analyzing your document…</div>}
       <span className="rp-screen-reader" role="status">{status}</span>
     </form>
@@ -166,7 +167,7 @@ export default function ReviewPage({ hidden, onComplete, onInvalidate }) {
   return <main id={hidden ? undefined : 'main'} className="review-page" tabIndex={-1} hidden={hidden}>
     <div className="shell rp-workspace">
       <a href="/#home" className="rp-back"><ArrowLeft size={17} strokeWidth={1.6} aria-hidden="true" />Back to home</a>
-      <div className="rp-page-heading"><h1 ref={headingRef} tabIndex={-1}>Review your document.</h1><p>Upload a file or photo, then analyze it.</p></div>
+      <div className="rp-page-heading"><h1 ref={headingRef} tabIndex={-1}>Review your document.</h1></div>
       <DocumentPicker onComplete={onComplete} onInvalidate={onInvalidate} />
     </div>
   </main>;
