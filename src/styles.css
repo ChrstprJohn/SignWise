@@ -154,3 +154,9 @@ svg { flex-shrink: 0; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+.rp-back-mobile { display: none; }
+@media (max-width: 700px) {
+  .rp-back-desktop { display: none; }
+  .rp-back-mobile { display: inline; }
+}

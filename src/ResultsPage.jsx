@@ -5,8 +5,15 @@ import './results.css';
 import { trackEvent } from './analytics.js';
 import { reviewCounts } from './analytics-metadata.js';
 
+function toggleFinding(event) {
+  // Summary handles its own native toggle; don't interrupt links or text selection.
+  if (event.target.closest('summary, a, button, input') || window.getSelection()?.toString()) return;
+  const finding = event.currentTarget.querySelector('.result-finding');
+  if (finding) finding.open = !finding.open;
+}
+
 function FindingList({ items }) {
-  return <ul className="result-findings">{items.map((item, index) => <li key={index}>
+  return <ul className="result-findings">{items.map((item, index) => <li key={index} onClick={toggleFinding}>
     <details className="result-finding" name="review-findings">
     <summary>
     <div className="result-finding-title"><h3>{item.title}</h3></div>
@@ -59,7 +66,7 @@ export default function ResultsPage({ report }) {
 
   if (!report) return <main id="main" className="results-page" tabIndex={-1}>
     <div className="shell results-workspace result-empty-page">
-      <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" />Back to upload</a>
+      <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" /><span className="rp-back-desktop">Back to upload</span><span className="rp-back-mobile">Back</span></a>
       <h1 ref={titleRef} tabIndex={-1}>Start with a document.</h1>
       <p>This review is no longer available. Upload your document to create a new one.</p>
       <a className="button button-primary" href="/review/" onClick={(event) => navigateTo('/review/', event)}>Review a document<ArrowUpRight size={17} aria-hidden="true" /></a>
@@ -70,14 +77,14 @@ export default function ResultsPage({ report }) {
   return <main id="main" className="results-page" tabIndex={-1}>
     <div className="shell results-workspace">
       <div className="result-toolbar">
-        <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" />Back to upload</a>
+        <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" /><span className="rp-back-desktop">Back to upload</span><span className="rp-back-mobile">Back</span></a>
         <button className="result-save" type="button" onClick={downloadReview} disabled={saving}><Download size={16} aria-hidden="true" />{saving ? 'Creating PDF…' : <><span className="result-desktop-label">Save as PDF</span><span className="result-mobile-label">Save PDF</span></>}</button>
       </div>
       {saveError && <p className="result-export-error" role="alert">{saveError}</p>}
       <div className="result-summary-grid">
       <header className="result-heading">
         <h1 ref={titleRef} tabIndex={-1}>Document review</h1>
-        <p><FileText size={17} strokeWidth={1.5} aria-hidden="true" /><span>{filename}<span className="result-document-type">{review.documentType}</span></span></p>
+        <p><FileText size={17} strokeWidth={1.5} aria-hidden="true" /><span>{filename}</span></p>
       </header>
       <ReviewMap review={review} />
       </div>
@@ -93,9 +100,15 @@ export default function ResultsPage({ report }) {
       </section>
       <section id="follow-up" className="result-section" aria-labelledby="follow-up-heading">
         <div className="result-section-heading"><MessageCircle size={23} strokeWidth={1.5} aria-hidden="true" /><h2 id="follow-up-heading">Questions to ask</h2><span>{review.questions.length}</span></div>
-        {review.questions.length ? <ol className="result-questions">{review.questions.map((item, index) => <li key={index}>
-          <span className="result-question-kind">{item.kind === 'missing' ? 'Missing detail' : 'Unclear wording'}</span>
-          <h3>{item.question}</h3><p>{item.why}</p>
+        {review.questions.length ? <ol className="result-questions">{review.questions.map((item, index) => <li key={index} onClick={toggleFinding}>
+          <details className="result-finding" name="review-findings">
+            <summary>
+              <div className="result-finding-title"><h3>{item.question}</h3></div>
+              <span className="result-finding-preview">{item.why}</span>
+              <span className="result-finding-toggle"><span className="result-show-more">Show more</span><span className="result-show-less">Show less</span><span className="result-accordion-icon" aria-hidden="true"><Plus className="result-plus" size={20} /><Minus className="result-minus" size={20} /></span></span>
+            </summary>
+            <dl className="result-finding-detail"><div><dt>Question</dt><dd>{item.question}</dd></div><div><dt>{item.kind === 'missing' ? 'Missing detail' : 'Unclear wording'}</dt><dd>{item.why}</dd></div></dl>
+          </details>
         </li>)}</ol> : <p className="result-empty">No missing or unclear details identified for follow-up.</p>}
       </section>
 
@@ -111,4 +124,5 @@ export default function ResultsPage({ report }) {
     </div>
   </main>;
 }
+
 

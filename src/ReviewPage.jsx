@@ -154,10 +154,11 @@ export default function ReviewPage({ hidden, onComplete, onInvalidate }) {
   }, [hidden]);
   return <main id={hidden ? undefined : 'main'} className="review-page" tabIndex={-1} hidden={hidden}>
     <div className="shell rp-workspace">
-      <a href="/#home" className="rp-back"><ArrowLeft size={17} strokeWidth={1.6} aria-hidden="true" />Back to home</a>
+      <a href="/#home" className="rp-back"><ArrowLeft size={17} strokeWidth={1.6} aria-hidden="true" /><span className="rp-back-desktop">Back to home</span><span className="rp-back-mobile">Back</span></a>
       <div className="rp-page-heading"><h1 ref={headingRef} tabIndex={-1}>Review your document.</h1></div>
       <DocumentPicker onComplete={onComplete} onInvalidate={onInvalidate} />
     </div>
   </main>;
 }
+
 
