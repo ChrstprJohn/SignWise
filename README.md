@@ -40,6 +40,16 @@ pnpm start
 
 The built server binds to `127.0.0.1:5173`, with an optional `PORT` environment setting. `pnpm preview --host 127.0.0.1` also includes the API for local checks. Stop foreground servers with Ctrl+C. Static-only hosting cannot run document analysis; this local setup has no authentication, per-user quota, or public deployment configuration.
 
+## Deploy to Vercel
+
+The root `api/status.js` and `api/analyze.js` files deploy the shared review backend as Node.js functions. The Vite plugin runs these endpoints only during local development and preview; building static files alone does not create an API.
+
+Set `GEMINI_API_KEY` and `GEMINI_MODEL` in the Vercel project's environment variables for Production (and Preview if needed). Use the same model that works locally, such as `gemini-3.1-flash-lite`. Keep the key server-only, without a `VITE_` prefix. Redeploy after adding variables or these API files. The checked-in `vercel.json` selects the Vite build, `dist` output, and a 150-second analysis function duration.
+
+After deployment, open `/api/status` on your deployed domain. It should return JSON with `configured: true` and `provider: "Gemini"`. HTML or a 404 means the function is not deployed; `configured: false` means the deployed function does not have the key.
+
+Vercel functions have a [4.5 MB request limit](https://vercel.com/docs/functions/limitations), including multipart overhead. Use documents below 4 MB on this deployment, even though the standalone server accepts up to 10 MB. Larger uploads require a separate upload/storage flow. The in-memory concurrency limit applies per function instance.
+
 ## Review flow
 
 - Back to home appears above the review title.
