@@ -66,7 +66,7 @@ export default function ResultsPage({ report }) {
 
   if (!report) return <main id="main" className="results-page" tabIndex={-1}>
     <div className="shell results-workspace result-empty-page">
-      <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" /><span className="rp-back-desktop">Back to upload</span><span className="rp-back-mobile">Back</span></a>
+      <a className="rp-back" href="/" onClick={(event) => navigateTo('/', event)}><ArrowLeft size={17} aria-hidden="true" /><span className="rp-back-desktop">Back to home</span><span className="rp-back-mobile">Back</span></a>
       <h1 ref={titleRef} tabIndex={-1}>Start with a document.</h1>
       <p>This review is no longer available. Upload your document to create a new one.</p>
       <a className="button button-primary" href="/review/" onClick={(event) => navigateTo('/review/', event)}>Review a document<ArrowUpRight size={17} aria-hidden="true" /></a>
@@ -77,7 +77,7 @@ export default function ResultsPage({ report }) {
   return <main id="main" className="results-page" tabIndex={-1}>
     <div className="shell results-workspace">
       <div className="result-toolbar">
-        <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" /><span className="rp-back-desktop">Back to upload</span><span className="rp-back-mobile">Back</span></a>
+        <a className="rp-back" href="/" onClick={(event) => navigateTo('/', event)}><ArrowLeft size={17} aria-hidden="true" /><span className="rp-back-desktop">Back to home</span><span className="rp-back-mobile">Back</span></a>
         <button className="result-save" type="button" onClick={downloadReview} disabled={saving}><Download size={16} aria-hidden="true" />{saving ? 'Creating PDF…' : <><span className="result-desktop-label">Save as PDF</span><span className="result-mobile-label">Save PDF</span></>}</button>
       </div>
       {saveError && <p className="result-export-error" role="alert">{saveError}</p>}
