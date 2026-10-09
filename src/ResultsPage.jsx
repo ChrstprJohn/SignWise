@@ -113,13 +113,6 @@ export default function ResultsPage({ report }) {
       </section>
 
       </div>
-      <details className="result-overview">
-        <summary>Document overview</summary>
-        <div className="result-overview-content"><p>{review.summary}</p>
-          {review.keyTerms.length > 0 && <dl>{review.keyTerms.map((term, index) => <div key={index}><dt>{term.name}</dt><dd>{term.value}{term.source && <small>{term.source}</small>}</dd></div>)}</dl>}
-          {review.limitations.length > 0 && <div className="result-limitations"><h3>Review limits</h3><ul>{review.limitations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
-        </div>
-      </details>
       <p className="result-disclaimer">AI can miss details. Check the original; this isn’t legal advice.</p>
     </div>
   </main>;
