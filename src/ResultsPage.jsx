@@ -1,28 +1,39 @@
-import { useEffect, useRef } from 'react';
-import { ArrowLeft, ArrowUpRight, Check, CircleAlert, Download, FileText, MessageCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { ArrowLeft, ArrowUpRight, Check, CircleAlert, Download, FileText, MessageCircle, Plus, Minus } from 'lucide-react';
 import { navigateTo } from './navigation.js';
-import { formatReviewText } from './review-export.js';
 import './results.css';
 import { trackEvent } from './analytics.js';
 import { reviewCounts } from './analytics-metadata.js';
 
-function Clause({ quote, location }) {
-  if (!quote && !location) return null;
-  return <details className="result-clause">
-    <summary>View clause{location && <span> · {location}</span>}</summary>
-    {quote ? <blockquote>{quote}</blockquote> : <p>See {location} in the original document.</p>}
-  </details>;
-}
-
-function FindingList({ items, concerns = false }) {
+function FindingList({ items }) {
   return <ul className="result-findings">{items.map((item, index) => <li key={index}>
-    <div className="result-finding-title"><h3>{item.title}</h3>{concerns && <span className={`result-priority result-priority-${item.severity}`}>{item.severity} priority</span>}</div>
-    <p>{item.explanation}</p>
-    <Clause quote={item.quote} location={item.location} />
+    <details className="result-finding" name="review-findings">
+    <summary>
+    <div className="result-finding-title"><h3>{item.title}</h3></div>
+    <span className="result-finding-preview">{item.explanation}</span>
+    <span className="result-finding-toggle"><span className="result-show-more">Show more</span><span className="result-show-less">Show less</span><span className="result-accordion-icon" aria-hidden="true"><Plus className="result-plus" size={20} /><Minus className="result-minus" size={20} /></span></span>
+    </summary>
+    <dl className="result-finding-detail">
+      {(item.quote || item.location) && <div><dt>Term</dt><dd>{item.quote}{item.location && <small className="result-term-source">{item.location}</small>}</dd></div>}
+      <div className="result-verdict"><dt>Verdict</dt><dd>{item.explanation}</dd></div>
+    </dl>
+    </details>
   </li>)}</ul>;
 }
 
+function ReviewMap({ review }) {
+  const groups = [
+    { id: 'red-flags', label: 'Red flags', count: review.redFlags.length, note: 'Concerns to review', tone: 'concerns' },
+    { id: 'good-terms', label: 'Good terms', count: review.goodTerms.length, note: 'Helpful clauses', tone: 'benefits' },
+    { id: 'follow-up', label: 'Questions to ask', mobileLabel: 'Questions', count: review.questions.length, note: 'Points to clarify', tone: 'questions' },
+  ];
+  return <nav className="result-count-cards" aria-label="Review summary">{groups.map(group => <a key={group.id} href={`#${group.id}`} className={`result-count-card result-count-${group.tone}`}>
+    <span>{group.mobileLabel ? <><span className="result-desktop-label">{group.label}</span><span className="result-mobile-label">{group.mobileLabel}</span></> : group.label}</span><strong>{group.count}</strong><small>{group.note}</small>
+  </a>)}</nav>;
+}
 export default function ResultsPage({ report }) {
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const titleRef = useRef(null);
   const trackedReport = useRef(undefined);
   useEffect(() => {
@@ -32,17 +43,18 @@ export default function ResultsPage({ report }) {
   }, [report]);
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
 
-  function downloadReview() {
+  async function downloadReview() {
+    if (saving) return;
+    setSaving(true); setSaveError('');
     const properties = { ...report.analytics, ...reviewCounts(report.review) };
     trackEvent('review_download_requested', properties);
     try {
-      const url = URL.createObjectURL(new Blob([formatReviewText(report)], { type: 'text/plain;charset=utf-8' }));
-      const link = document.createElement('a');
-      link.href = url; link.download = 'signwise-review.txt';
-      document.body.appendChild(link); link.click(); link.remove();
+      const { createReviewPdf } = await import('./review-pdf.js');
+      const pdf = await createReviewPdf(report);
+      pdf.save('signwise-review.pdf');
       trackEvent('review_download_started', properties);
-      setTimeout(() => URL.revokeObjectURL(url), 30_000);
-    } catch (error) { trackEvent('review_download_failed', { ...properties, error_type: 'export' }); throw error; }
+    } catch { trackEvent('review_download_failed', { ...properties, error_type: 'export' }); setSaveError('Could not save the PDF. Try again.'); }
+    finally { setSaving(false); }
   }
 
   if (!report) return <main id="main" className="results-page" tabIndex={-1}>
@@ -59,34 +71,35 @@ export default function ResultsPage({ report }) {
     <div className="shell results-workspace">
       <div className="result-toolbar">
         <a className="rp-back" href="/review/" onClick={(event) => navigateTo('/review/', event)}><ArrowLeft size={17} aria-hidden="true" />Back to upload</a>
-        <button className="result-save" type="button" onClick={downloadReview}><Download size={16} aria-hidden="true" />Save review</button>
+        <button className="result-save" type="button" onClick={downloadReview} disabled={saving}><Download size={16} aria-hidden="true" />{saving ? 'Creating PDF…' : <><span className="result-desktop-label">Save as PDF</span><span className="result-mobile-label">Save PDF</span></>}</button>
       </div>
+      {saveError && <p className="result-export-error" role="alert">{saveError}</p>}
+      <div className="result-summary-grid">
       <header className="result-heading">
-        <h1 ref={titleRef} tabIndex={-1}>Your document review.</h1>
+        <h1 ref={titleRef} tabIndex={-1}>Document review</h1>
         <p><FileText size={17} strokeWidth={1.5} aria-hidden="true" /><span>{filename}<span className="result-document-type">{review.documentType}</span></span></p>
       </header>
-      <nav className="result-jump-nav" aria-label="Review sections">
-        <a href="#red-flags">Red flags<span>{review.redFlags.length}</span></a>
-        <a href="#good-terms">Good terms<span>{review.goodTerms.length}</span></a>
-        <a href="#follow-up">Follow-up<span>{review.questions.length}</span></a>
-      </nav>
+      <ReviewMap review={review} />
+      </div>
 
+      <div className="result-columns">
       <section id="red-flags" className="result-section result-concerns" aria-labelledby="red-flags-heading">
         <div className="result-section-heading"><CircleAlert size={23} strokeWidth={1.5} aria-hidden="true" /><h2 id="red-flags-heading">Red flags</h2><span>{review.redFlags.length}</span></div>
-        {review.redFlags.length ? <FindingList items={review.redFlags} concerns /> : <p className="result-empty">No specific red flags identified. Check the original before signing.</p>}
+        {review.redFlags.length ? <FindingList items={review.redFlags} /> : <p className="result-empty">No specific red flags identified. Check the original before signing.</p>}
       </section>
-      <section id="good-terms" className="result-section" aria-labelledby="good-terms-heading">
+      <section id="good-terms" className="result-section result-benefits" aria-labelledby="good-terms-heading">
         <div className="result-section-heading"><Check size={23} strokeWidth={1.5} aria-hidden="true" /><h2 id="good-terms-heading">Good terms</h2><span>{review.goodTerms.length}</span></div>
         {review.goodTerms.length ? <FindingList items={review.goodTerms} /> : <p className="result-empty">No clearly favorable terms identified.</p>}
       </section>
       <section id="follow-up" className="result-section" aria-labelledby="follow-up-heading">
-        <div className="result-section-heading"><MessageCircle size={23} strokeWidth={1.5} aria-hidden="true" /><h2 id="follow-up-heading">Follow-up questions</h2><span>{review.questions.length}</span></div>
+        <div className="result-section-heading"><MessageCircle size={23} strokeWidth={1.5} aria-hidden="true" /><h2 id="follow-up-heading">Questions to ask</h2><span>{review.questions.length}</span></div>
         {review.questions.length ? <ol className="result-questions">{review.questions.map((item, index) => <li key={index}>
           <span className="result-question-kind">{item.kind === 'missing' ? 'Missing detail' : 'Unclear wording'}</span>
           <h3>{item.question}</h3><p>{item.why}</p>
         </li>)}</ol> : <p className="result-empty">No missing or unclear details identified for follow-up.</p>}
       </section>
 
+      </div>
       <details className="result-overview">
         <summary>Document overview</summary>
         <div className="result-overview-content"><p>{review.summary}</p>
@@ -98,3 +111,4 @@ export default function ResultsPage({ report }) {
     </div>
   </main>;
 }
+

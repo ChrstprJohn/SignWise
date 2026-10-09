@@ -48,17 +48,6 @@ function DocumentPicker({ onComplete, onInvalidate }) {
 
 
 
-  function cancelReview(event) {
-    // The button becomes a submit button during this click's state update.
-    event.preventDefault();
-    trackAttempt(attemptRef.current, 'document_review_cancelled', { reason: 'user' });
-    jobRef.current += 1;
-    requestRef.current?.abort();
-    requestRef.current = null;
-    setBusy(false);
-    setStatus('Review cancelled. Your file is still selected.');
-  }
-
   function chooseFiles(files, photoOnly = false, source = 'file_picker') {
     if (busy || !files?.length) return;
     if (files.length > 1) { setError('Choose one file at a time.'); trackEvent('document_selection_rejected', { source, reason: 'multiple_files' }); return; }
@@ -125,7 +114,7 @@ function DocumentPicker({ onComplete, onInvalidate }) {
           <div className="rp-file-details"><h2 title={file.name}>{file.name}</h2><p>{formatFileSize(file.size)} · {busy ? 'Being reviewed' : 'Ready to review'}</p></div>
           <button className="rp-remove-file" type="button" disabled={busy} onClick={clearFile} aria-label={`Remove ${file.name}`}><X size={20} strokeWidth={1.6} aria-hidden="true" /></button>
         </div>}
-        <div className="rp-empty-file" aria-hidden={Boolean(file)}><h2>Upload your document</h2><p className="rp-desktop-hint">Or drag and drop it here.</p></div>
+        <div className="rp-empty-file" aria-hidden={Boolean(file)}><h2>{dragging && !busy ? 'Drop your document here' : 'Upload your document'}</h2><p className="rp-desktop-hint">{dragging && !busy ? 'Release to select this file.' : 'Or drag and drop it here.'}</p></div>
         <div className="rp-picker-actions" inert={Boolean(file)} aria-hidden={Boolean(file)}>
           <label className={`button button-${file ? 'outline' : 'primary'} rp-file-control${busy ? ' rp-disabled' : ''}`}>
             <input ref={inputRef} type="file" accept={FILE_ACCEPT} disabled={busy} aria-label={file ? 'Choose a different file' : 'Choose a file'} aria-describedby="rp-file-help rp-upload-error" aria-invalid={Boolean(error)} onChange={(event) => chooseFiles(event.target.files)} onClick={(event) => { event.target.value = ''; }} />
@@ -144,13 +133,12 @@ function DocumentPicker({ onComplete, onInvalidate }) {
       {file && <div className="rp-analysis-row">
         <div className="rp-terms-consent">
           <input id="rp-accept-terms" type="checkbox" checked={acceptedTerms} disabled={busy} onChange={(event) => setAcceptedTerms(event.target.checked)} required />
-          <label htmlFor="rp-accept-terms">I accept the <a className="text-link" href="/terms/" target="_blank" rel="noopener">Terms of Service<span className="rp-screen-reader"> (opens in a new tab)</span></a>.</label>
+          <label htmlFor="rp-accept-terms">I agree to<span className="rp-consent-desktop"> the</span>{' '}<a className="text-link" href="/terms/" target="_blank" rel="noopener"><span className="rp-consent-desktop">Terms of Service</span><span className="rp-consent-mobile">Terms</span><span className="rp-screen-reader"> (opens in a new tab)</span></a>{' '}<span className="rp-consent-desktop">and</span><span className="rp-consent-mobile">&amp;</span>{' '}<a className="text-link" href="/privacy/" target="_blank" rel="noopener"><span className="rp-consent-desktop">Privacy Policy</span><span className="rp-consent-mobile">Privacy</span><span className="rp-screen-reader"> (opens in a new tab)</span></a>.</label>
         </div>
         <div className="rp-analyze-actions">
-          {busy ? <button className="button button-outline" type="button" onClick={cancelReview}>Cancel review<X size={16} aria-hidden="true" /></button> : <button className="button button-primary" type="submit" disabled={!acceptedTerms || connection === 'checking' || connection === 'unconfigured'}>Analyze document<ArrowUpRight size={17} aria-hidden="true" /></button>}
+          <button className="button button-primary" type="submit" aria-busy={busy} disabled={busy || !acceptedTerms || connection === 'checking' || connection === 'unconfigured'}>{busy ? 'Analyzing' : 'Analyze document'}{busy ? <LoaderCircle size={18} className="rp-spinner" aria-hidden="true" /> : <ArrowUpRight size={17} aria-hidden="true" />}</button>
         </div>
       </div>}
-      {busy && <div className="rp-progress" aria-hidden="true"><LoaderCircle size={19} className="rp-spinner" />Google Gemini is analyzing your document…</div>}
       <span className="rp-screen-reader" role="status">{status}</span>
     </form>
 

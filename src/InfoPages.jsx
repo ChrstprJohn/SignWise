@@ -88,7 +88,7 @@ export default function InfoSections() {
         <header className="ip-intro"><h2 id="faqs-heading">Before you upload.</h2></header>
           <div className="ip-essentials">
             {essentials.map(({ question, answer }) => (
-              <details className="ip-disclosure" key={question}>
+              <details className="ip-disclosure" name="upload-faqs" key={question}>
                 <summary>
                   <span>{question}</span>
                   <span className="ip-disclosure-icon" aria-hidden="true">
